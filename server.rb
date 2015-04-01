@@ -3,6 +3,7 @@ require 'yaml'
 
 class Base < Sinatra::Base
   set :upload_dir, File.join(File.dirname(__FILE__), 'files')
+  set :bind, '0.0.0.0'
 
   not_found do
     status 404
