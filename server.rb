@@ -1,6 +1,8 @@
 require 'sinatra/base'
 
 class Base < Sinatra::Base
+  set :upload_dir, File.join(File.dirname(__FILE__), 'files')
+
   not_found do
     status 404
   end
@@ -13,11 +15,11 @@ class Protected < Base
   end
 
   get '/' do
-    'secret'
+    'Protected ;-)'
   end
 
   get '/:file' do
-    file = File.join(File.dirname(__FILE__), 'files', params[:file])
+    file = File.join(settings.upload_dir, params[:file])
 
     if File.exist? file
       send_file file
@@ -25,6 +27,15 @@ class Protected < Base
       raise Sinatra::NotFound
     end
   end
+
+  post '/upload' do
+    File.open("#{settings.upload_dir}/#{params[:file][:filename]}", "w") do |f|
+      f.write(params[:file][:tempfile].read)
+    end
+
+    status 202
+  end
+
 end
 
 class Public < Base
