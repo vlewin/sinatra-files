@@ -1,4 +1,5 @@
 require 'sinatra/base'
+require 'yaml'
 
 class Base < Sinatra::Base
   set :upload_dir, File.join(File.dirname(__FILE__), 'files')
@@ -9,9 +10,12 @@ class Base < Sinatra::Base
 end
 
 class Protected < Base
+  set :credentials, YAML.load_file('credentials.yml')
+  set :username, credentials['username']
+  set :password, credentials['password']
 
   use Rack::Auth::Basic, "Protected Area" do |username, password|
-    username == 'foo' && password == 'bar'
+    username == settings.username && password == settings.password
   end
 
   get '/' do
