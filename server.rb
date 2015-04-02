@@ -20,7 +20,14 @@ class Protected < Base
   end
 
   get '/' do
-    'Protected ;-)'
+    Dir.chdir(settings.upload_dir)
+
+    html = 'Uploads<hr>'
+    html += '<ul>'
+      Dir.glob('*').each do |file|
+        html += "<li><a href='/files/#{file}'>#{file} (#{File.ctime(file).strftime('%d.%m.%Y %H:%M')})</a></li>"
+      end
+    html += '</ul>'
   end
 
   get '/:file' do
